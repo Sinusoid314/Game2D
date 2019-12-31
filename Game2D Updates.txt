@@ -1,0 +1,132 @@
+[v1.0]
+
+(December 25, 2019)
+	- Added ability to move sprites from one layer to another.
+	- Added ability to change the z-order of both layers and sprites.
+
+(December 24, 2019)
+	- Added method to CBoundingRect to check for overlap with a position-size rectangle.
+
+(December 23, 2019)
+	- Added a name property to CLayer.
+	- Added a layer iterator to CCollisionEvent.
+	- Added ability to turn on/off motion, collision detection, and drawing for each layer.
+
+(December 22, 2019)
+	- Modified applyGravity to initialize to false.
+	- Added applyMotion to CSpriteEx to turn on/off the movement of sprites in MoveSprites().
+	- Add support for multiple layers of sprites.
+
+(December 19, 2019)
+	- Modified gameMainWin_OnSize_Default(), ResizeView(), and Game2D_Setup() to
+	  concentrate resizing of the view box and view control to ResizeView().
+	- Modified the view box's implementation to a position-size model.
+
+(December 17, 2019)
+	- Added ResizeView() to change the view box's size.
+	- Added MoveView() and ShiftView() functions to move the view box by either
+	  absolute position or relative position, respectively.
+	- Modified DrawSprites(), changing the offset arguments to CSprite::Draw()
+	  to negations of the view box's position.
+	- Added viewLimitRect and ClampView() to set min/max limits to the view box's position.
+
+(December 12, 2019)
+	- Added background image display option TILE.
+
+(November 27, 2019)
+	- Added background image display options NORMAL, CENTER, and STRECH.
+
+(November 26, 2019)
+	- Added DrawScreen() function to encompass DrawBackImage() and DrawSprite() functions.
+
+(November 24, 2019)
+	- Added option to allow sprites to be drawn relative to the view box.
+	- Added option to allow background image to be drawn relative to the view box.
+	- Changed isSolid in CSpriteEx to applyCollisions.
+	- Changed hasWeight in CSpriteEx to applyGravity.
+	- Added DrawBackImage() function.
+
+(November 9, 2019)
+	- Added ability to pause and exit main game loop.
+	- Add ability to clamp the velocity of individual sprites.
+
+(October 31, 2019)
+	- Added custom-callback capability in CSpriteEx and ResolveCollisions() to handle
+	  each collision event (pre- and post-resolution).
+
+(October 24, 2019)
+	- Added resolveAxisX and resolveAxisY to CCollisionEvent so that ResolveCollisions() can
+	  ignore specific axis.
+	  
+(September 8, 2019)
+	- Added hasWeight to CSpriteEx and gravityAcceleration vector, and modified
+	  MoveSprites() to use them.
+
+(September 5, 2019)
+	- Modified AddCollisionEvent() to account for floating-point rounding errors when
+	  calculating alignmentTime.
+
+(August 31, 2019)
+	- Added resolvedVelocity[2] to CCollisionEvent and modified AddCollisionEvent()
+	  and ResolveCollisions() to use it.
+
+(August 20, 2019)
+	- Modify AddCollisionEvent() to allow sliding for sprites that are initially in contact.
+
+(August 17, 2019)
+	- Add AddCollisionEvent() function.
+
+(August 14, 2019)
+	- Added CONTACT_AXIS_NIL and CONTACT_SIDE_NIL constants.
+	- Modified CCollisionEvent constructor to set contactSide[] and contactAxis to NIL constants.
+	- Modified alignmentList to be a static object in AddCollisionEvent().
+
+(August 12, 2019)
+	- Replaced CollidesWith() with GetAbsBoundingRect() in CSpriteEx.
+	- Added two global CBoundingRect objects to use with DetectCollisions() and AddCollisionEvent().
+	- Modified DetectCollisions() to call CSpriteEx::GetAbsBoundingRect() and 
+	  CBoundingRect::IntersectsWith() for each sprite collision test.
+
+(August 8, 2019)
+	- Renamed IntersectsWith() to CollidesWith() in CSpriteEx and moved overlap-checking code 
+	  to CBoundingRect::IntersectsWith().
+	- Added global CBoundingRect object viewRect.
+	- Modified gameMainWin_OnSize_Default() to resize viewRect with gameView.
+	- Modified DrawSprites() to pass viewRect's min-position to CSprite::Draw().
+
+(August 7, 2019)
+	- Replaced boundingRect RECT structs with CBoundingRect objects that use a min/max representation.
+
+(August 5, 2019)
+	- Renamed deltaTime to motionStepTime.
+	- Replaced ApplyVelocity() in CSpriteEx with UpdateMotion() function that updates 
+	  both velocity, based on acceleration, and position, based on velocity.
+	- Renamed CollidesWith() to IntersectsWith() in CSpriteEx.
+	- Added a bounding box to CSpriteEx to use with collision detection/resolution.
+	- Modified DrawSprites() to round the sprite positions when setting drawLeft and drawHeight.
+
+(August 4, 2019)
+	- Added an #include to math.h.
+	- Replaced velocityX and velocityY in CSpriteEx with a velocity CVector2D.
+	- Added an acceleration CVector2D to CSpriteEx.
+	- Renamed timePerFrame to ticksPerFrame.
+	- Added a global deltaTime variable to use with physics and collision-resolution code.
+	- Replaced resolvedLeft[2] and resolvedTop[2] arrays of CCollisionEvent with 
+	  a CVelocity2D array resolvedPosition[2].
+	- Added a position CVector2D to CSpriteEx to use with all physics and collision code, using 
+	  drawLeft and drawHeight only for sprite drawing.
+
+(July 27, 2019)
+	- Removed hasWeight and state from CSpriteEx.
+	- Moved velocity and collision code from CSprite in WinGUI library to CSpriteEx in Game2D.
+	- Added an #include to the Vector2D library.
+
+(July 4, 2019)
+	- Added custom-callback capability to handle events within GameLoop().
+	- Added a "state" property to CSpriteEx.
+	- Added frame timing to GameLoop().
+
+(April 2019)
+	- Removed redundant comparisons in DetectCollisions().
+	- Sort collisionEventList in descending order to remove need
+	  for reverse_iterator in ResolveCollisions()
