@@ -1,0 +1,5 @@
+- Add jumping.
+
+- Add a cap to the walking and jumping speeds.
+
+- Add controls to shift the view box.
