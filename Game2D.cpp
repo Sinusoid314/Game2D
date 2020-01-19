@@ -415,14 +415,14 @@ void DrawScreen(void)
 //Draw background image and sprites to the view
 {
     if(beginDrawScreenFuncPtr != NULL)
-        (*beginDrawSpritesFuncPtr)();
+        (*beginDrawScreenFuncPtr)();
 
     DrawBackImage();
     DrawSprites();
     gameView.Redraw();
 
     if(endDrawScreenFuncPtr != NULL)
-        (*endDrawSpritesFuncPtr)();
+        (*endDrawScreenFuncPtr)();
 }
 
 void DrawSprites(void)
@@ -436,7 +436,7 @@ void DrawSprites(void)
             {
                 spriteItr1->drawLeft = int(roundf(spriteItr1->position.x));
                 spriteItr1->drawTop = int(roundf(spriteItr1->position.y));
-                if(drawRelativeToView)
+                if(spriteItr1->drawRelativeToView)
                 {
                     spriteItr1->Draw(&gameView);
                 }
@@ -455,7 +455,7 @@ void DrawBackImage(void)
     int imgOffsetLeft;
     int imgOffsetTop;
     int imgLeft;
-    int ImgTop;
+    int imgTop;
 
     if(backImagePtr == NULL)
         return;
@@ -492,7 +492,7 @@ void DrawBackImage(void)
         imgOffsetTop = -((-imgOffsetTop) % backImagePtr->imgHeight);
         for(imgTop = imgOffsetTop; imgTop < viewSize.y; imgTop += backImagePtr->imgHeight)
         {
-            for(imgLeft = imgOffsetLeft; imgLeft < viewSize.x; imgWidth += backImagePtr->imgWidth)
+            for(imgLeft = imgOffsetLeft; imgLeft < viewSize.x; imgLeft += backImagePtr->imgWidth)
             {
                 gameView.DrawImage(backImagePtr, imgLeft, imgTop);
             }
