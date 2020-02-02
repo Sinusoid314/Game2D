@@ -12,6 +12,7 @@ bool gameLoopPaused;
 DWORD ticksPerFrame;
 float motionStepTime;
 CVector2D gravityAcceleration;
+list<CSpriteFrameSheet> frameSheetList;
 CImage* backImagePtr;
 int backImageStyle;
 bool drawBackImageRelativeToView;
@@ -227,7 +228,6 @@ void AddCollisionEvent(void)
     static vector<CCollisionEvent> alignmentList;
     static CVector2D relativeVelocity;
     static float alignmentTime;
-    static float deltaTime;
 
     //Only need max of 2 alignment events
     alignmentList.reserve(2);
@@ -335,9 +335,8 @@ void AddCollisionEvent(void)
     }
 
     //Set resolved positions to the time of contact
-    deltaTime = motionStepTime - collisionEventList.back().contactTime;
-    collisionEventList.back().resolvedPosition[0] = spriteItr1->position - (spriteItr1->velocity * deltaTime);
-    collisionEventList.back().resolvedPosition[1] = spriteItr2->position - (spriteItr2->velocity * deltaTime);
+    collisionEventList.back().resolvedPosition[0] = spriteItr1->prevPosition + (spriteItr1->velocity * collisionEventList.back().contactTime);
+    collisionEventList.back().resolvedPosition[1] = spriteItr2->prevPosition + (spriteItr2->velocity * collisionEventList.back().contactTime);
 
     //Set resolved velocities
     if(collisionEventList.back().contactAxis == CONTACT_AXIS_Y)
@@ -627,14 +626,21 @@ CSpriteEx::CSpriteEx(CSpriteFrameSheet* newFrameSheetPtr)
 void CSpriteEx::UpdateMotion(float deltaTime)
 //Update the sprite's velocity and position
 {
-    velocity += (acceleration * deltaTime);
+    prevVelocity = velocity;
+    velocity = prevVelocity + (acceleration * deltaTime);
 
     if(clampVelocity)
     {
         velocity.Clamp(minVelocity, maxVelocity);
     }
 
-    position += (velocity * deltaTime);
+    prevPosition = position;
+    position = prevPosition + (velocity * deltaTime);
+
+    if(clampPosition)
+    {
+        position.Clamp(minPosition, maxPosition);
+    }
 
     //Acceleration does not persist between time steps
     acceleration.SetComponents(0, 0);
@@ -650,11 +656,14 @@ void CSpriteEx::GetAbsBoundingRect(CBoundingRect& absBoundingRectRef)
 void CSpriteEx::Init(void)
 //Initialize extended sprite properties
 {
+    minPosition.SetComponents(-FLT_MAX, -FLT_MAX);
+    maxPosition.SetComponents(FLT_MAX, FLT_MAX);
     minVelocity.SetComponents(-FLT_MAX, -FLT_MAX);
     maxVelocity.SetComponents(FLT_MAX, FLT_MAX);
     applyMotion = true;
     applyGravity = false;
     applyCollisions = true;
+    clampPosition = false;
     clampVelocity = false;
     drawRelativeToView = false;
     boundingRect.max.x = float(drawWidth);

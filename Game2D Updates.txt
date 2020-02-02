@@ -1,5 +1,10 @@
 [v1.0]
 
+(February 1, 2020)
+	- Added prevPosition and prevVelocity members to CSpriteEx.
+	- Added ability to clamp the position of individual sprites.
+	- Added a list of sprite frame sheets.
+
 (December 25, 2019)
 	- Added ability to move sprites from one layer to another.
 	- Added ability to change the z-order of both layers and sprites.
@@ -15,7 +20,7 @@
 (December 22, 2019)
 	- Modified applyGravity to initialize to false.
 	- Added applyMotion to CSpriteEx to turn on/off the movement of sprites in MoveSprites().
-	- Add support for multiple layers of sprites.
+	- Added support for multiple layers of sprites.
 
 (December 19, 2019)
 	- Modified gameMainWin_OnSize_Default(), ResizeView(), and Game2D_Setup() to
@@ -48,7 +53,7 @@
 
 (November 9, 2019)
 	- Added ability to pause and exit main game loop.
-	- Add ability to clamp the velocity of individual sprites.
+	- Added ability to clamp the velocity of individual sprites.
 
 (October 31, 2019)
 	- Added custom-callback capability in CSpriteEx and ResolveCollisions() to handle
