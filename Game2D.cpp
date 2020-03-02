@@ -12,13 +12,13 @@ bool gameLoopPaused;
 DWORD ticksPerFrame;
 float motionStepTime;
 CVector2D gravityAcceleration;
-list<CSpriteFrameSheet> frameSheetList;
 CImage* backImagePtr;
 int backImageStyle;
 bool drawBackImageRelativeToView;
 CVector2D viewPosition;
 CVector2D viewSize;
 CBoundingRect viewLimitRect;
+list<CSpriteFrameSheet> frameSheetList;
 list<CLayer> layerList;
 list<CCollisionEvent> collisionEventList;
 CMainWindow gameMainWin;
@@ -651,6 +651,44 @@ void CSpriteEx::GetAbsBoundingRect(CBoundingRect& absBoundingRectRef)
 {
     absBoundingRectRef.min = position + boundingRect.min;
     absBoundingRectRef.max = position + boundingRect.max;
+}
+
+void CSpriteEx::ResizeWithBoundingRect(int newWidth, int newHeight)
+//Change the sprite's draw size while keeping its bounding box proportionately sized
+{
+    int widthChange;
+    int heightChange;
+
+    widthChange = newWidth - drawWidth;
+    heightChange = newHeight - drawHeight;
+
+    drawWidth = newWidth;
+    drawHeight = newHeight;
+
+    boundingRect.max.x += widthChange;
+    boundingRect.max.y += heightChange;
+}
+
+void CSpriteEx::ScaleWithBoundingRect(int newScaleWidth, int newScaleHeight)
+//Change the sprite's scaled size while keeping its bounding box proportionately sized
+{
+    int widthChange;
+    int heightChange;
+    CSpriteFrameSheet* frameSheetPtr;
+
+    frameSheetPtr = GetFrameSheet();
+
+    if(frameSheetPtr == NULL)
+        return;
+
+    widthChange = (newScaleWidth * frameSheetPtr->frameWidth) - (scaleWidth * frameSheetPtr->frameWidth);
+    heightChange = (newScaleHeight * frameSheetPtr->frameHeight) - (scaleHeight * frameSheetPtr->frameHeight);
+
+    scaleWidth = newScaleWidth;
+    scaleHeight = newScaleHeight;
+
+    boundingRect.max.x += widthChange;
+    boundingRect.max.y += heightChange;
 }
 
 void CSpriteEx::Init(void)

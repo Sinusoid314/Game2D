@@ -33,13 +33,13 @@ extern bool gameLoopPaused;
 extern DWORD ticksPerFrame;
 extern float motionStepTime;
 extern CVector2D gravityAcceleration;
-extern std::list<CSpriteFrameSheet> frameSheetList;
 extern CImage* backImagePtr;
 extern int backImageStyle;
 extern bool drawBackImageRelativeToView;
 extern CVector2D viewPosition;
 extern CVector2D viewSize;
 extern CBoundingRect viewLimitRect;
+extern std::list<CSpriteFrameSheet> frameSheetList;
 extern std::list<CLayer> layerList;
 extern std::list<CCollisionEvent> collisionEventList;
 extern CMainWindow gameMainWin;
@@ -129,6 +129,8 @@ class CSpriteEx : public CSprite
 
     void UpdateMotion(float);
     void GetAbsBoundingRect(CBoundingRect&);
+    void ResizeWithBoundingRect(int, int);
+    void ScaleWithBoundingRect(int, int);
 
   private:
 

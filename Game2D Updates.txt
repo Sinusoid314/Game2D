@@ -1,5 +1,11 @@
 [v1.0]
 
+(February 29, 2020)
+	- Added ScaleWithBoundingRect() to CSpriteEx to change the sprite's scaled size while
+	  keeping its bounding box proportionately sized.
+	- Added ResizeWithBoundingRect() to CSpriteEx to Change the sprite's draw size while
+	  keeping its bounding box proportionately sized.
+
 (February 1, 2020)
 	- Added prevPosition and prevVelocity members to CSpriteEx.
 	- Added ability to clamp the position of individual sprites.
