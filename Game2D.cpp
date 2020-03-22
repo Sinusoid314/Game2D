@@ -1,6 +1,7 @@
 #include "float.h"
 #include "math.h"
 #include <iostream>
+#include <fstream>
 #include "..\String Extension\stringExt.h"
 #include "Game2D.h"
 
@@ -540,6 +541,97 @@ void SetLayerZOrder(list<CLayer>::iterator targetLayerItr, list<CLayer>::iterato
 //
 {
     layerList.splice(beforeLayerItr, layerList, targetLayerItr);
+}
+
+void SaveGameState(char* fileName)
+//Save the current game data to file
+{
+    ofstream fileObj;
+    unsigned int frameSheetCount;
+    unsigned int layerCount;
+    unsigned int spriteCount;
+    list<CSpriteFrameSheet>::iterator frameSheetItr;
+
+    fileObj.open(fileName, ios::out | ios::binary);
+    frameSheetCount = frameSheetList.size();
+    layerCount = layerList.size();
+
+    fileObj.write((char*)&gameLoopDone, sizeof(gameLoopDone));
+    fileObj.write((char*)&gameLoopPaused, sizeof(gameLoopPaused));
+    fileObj.write((char*)&ticksPerFrame, sizeof(ticksPerFrame));
+    fileObj.write((char*)&motionStepTime, sizeof(motionStepTime));
+    fileObj.write((char*)&gravityAcceleration.x, sizeof(gravityAcceleration.x));
+    fileObj.write((char*)&gravityAcceleration.y, sizeof(gravityAcceleration.y));
+    WriteStrToFile(fileObj, backImagePtr->imgFileName);
+    fileObj.write((char*)&backImageStyle, sizeof(backImageStyle));
+    fileObj.write((char*)&drawBackImageRelativeToView, sizeof(drawBackImageRelativeToView));
+    fileObj.write((char*)&viewPosition.x, sizeof(viewPosition.x));
+    fileObj.write((char*)&viewPosition.y, sizeof(viewPosition.y));
+    fileObj.write((char*)&viewSize.x, sizeof(viewSize.x));
+    fileObj.write((char*)&viewSize.y, sizeof(viewSize.y));
+    fileObj.write((char*)&viewLimitRect.min.x, sizeof(viewLimitRect.min.x));
+    fileObj.write((char*)&viewLimitRect.min.y, sizeof(viewLimitRect.min.y));
+    fileObj.write((char*)&viewLimitRect.max.x, sizeof(viewLimitRect.max.x));
+    fileObj.write((char*)&viewLimitRect.max.y, sizeof(viewLimitRect.max.y));
+
+    fileObj.write((char*)&frameSheetCount, sizeof(frameSheetCount));
+    for(frameSheetItr = frameSheetList.begin(); frameSheetItr != frameSheetList.end(); frameSheetItr++)
+    {
+        WriteStrToFile(fileObj, frameSheetItr->sheetName);
+        WriteStrToFile(fileObj, frameSheetItr->sheetFileName);
+        fileObj.write((char*)&frameSheetItr->frameWidth, sizeof(frameSheetItr->frameWidth));
+        fileObj.write((char*)&frameSheetItr->frameHeight, sizeof(frameSheetItr->frameHeight));
+        fileObj.write((char*)&frameSheetItr->frameCount, sizeof(frameSheetItr->frameCount));
+    }
+
+    fileObj.write((char*)&layerCount, sizeof(layerCount));
+    for(layerItr = layerList.begin(); layerItr != layerList.end(); layerItr++)
+    {
+        WriteStrToFile(fileObj, layerItr->layerName);
+        fileObj.write((char*)&layerItr->allowMotion, sizeof(layerItr->allowMotion));
+        fileObj.write((char*)&layerItr->allowCollisions, sizeof(layerItr->allowCollisions));
+        fileObj.write((char*)&layerItr->isVisible, sizeof(layerItr->isVisible));
+        spriteCount = layerItr->spriteList.size();
+        fileObj.write((char*)&spriteCount, sizeof(spriteCount));
+        for(spriteItr1 = layerItr->spriteList.begin(); spriteItr1 != layerItr->spriteList.end(); spriteItr1++)
+        {
+            WriteStrToFile(fileObj, spriteItr1->spriteName);
+            fileObj.write((char*)&spriteItr1->drawWidth, sizeof(spriteItr1->drawWidth));
+            fileObj.write((char*)&spriteItr1->drawHeight, sizeof(spriteItr1->drawHeight));
+            fileObj.write((char*)&spriteItr1->scaleWidth, sizeof(spriteItr1->scaleWidth));
+            fileObj.write((char*)&spriteItr1->scaleHeight, sizeof(spriteItr1->scaleHeight));
+            fileObj.write((char*)&spriteItr1->isVisible, sizeof(spriteItr1->isVisible));
+            fileObj.write((char*)&spriteItr1->isPlaying, sizeof(spriteItr1->isPlaying));
+            fileObj.write((char*)&spriteItr1->isMirroredX, sizeof(spriteItr1->isMirroredX));
+            fileObj.write((char*)&spriteItr1->isMirroredY, sizeof(spriteItr1->isMirroredY));
+            fileObj.write((char*)&spriteItr1->isScaled, sizeof(spriteItr1->isScaled));
+            fileObj.write((char*)&spriteItr1->drawsPerFrame, sizeof(spriteItr1->drawsPerFrame));
+            fileObj.write((char*)&spriteItr1->maxCycles, sizeof(spriteItr1->maxCycles));
+            //CSpriteEx properties
+            fileObj.write((char*)&spriteItr1->position, sizeof(CVector2D));
+            fileObj.write((char*)&spriteItr1->velocity, sizeof(CVector2D));
+            fileObj.write((char*)&spriteItr1->acceleration, sizeof(CVector2D));
+            fileObj.write((char*)&spriteItr1->minPosition, sizeof(CVector2D));
+            fileObj.write((char*)&spriteItr1->maxPosition, sizeof(CVector2D));
+            fileObj.write((char*)&spriteItr1->minVelocity, sizeof(CVector2D));
+            fileObj.write((char*)&spriteItr1->maxVelocity, sizeof(CVector2D));
+            fileObj.write((char*)&spriteItr1->applyMotion, sizeof(spriteItr1->applyMotion));
+            fileObj.write((char*)&spriteItr1->applyGravity, sizeof(spriteItr1->applyGravity));
+            fileObj.write((char*)&spriteItr1->applyCollisions, sizeof(spriteItr1->applyCollisions));
+            fileObj.write((char*)&spriteItr1->clampPosition, sizeof(spriteItr1->clampPosition));
+            fileObj.write((char*)&spriteItr1->clampVelocity, sizeof(spriteItr1->clampVelocity));
+            fileObj.write((char*)&spriteItr1->drawRelativeToView, sizeof(spriteItr1->drawRelativeToView));
+            fileObj.write((char*)&spriteItr1->boundingRect, sizeof(CBoundingRect));
+        }
+    }
+
+    fileObj.close();
+}
+
+void LoadGameState(char* fileName)
+//Load game data from file
+{
+
 }
 
 LRESULT gameMainWin_OnClose_Default(CWindow* winPtr, const CWinEvent& eventObj)

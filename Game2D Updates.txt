@@ -1,5 +1,12 @@
 [v1.0]
 
+(March 14, 2020)
+	- Moved WriteGameStateString() to the stringExt library as WriteStrToFile().
+
+(March 13, 2020)
+	- Added WriteGameStateString() to write the given string to the given game data file.
+	- Added SaveGameState() to write all the game data to file.
+
 (February 29, 2020)
 	- Added ScaleWithBoundingRect() to CSpriteEx to change the sprite's scaled size while
 	  keeping its bounding box proportionately sized.

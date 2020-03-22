@@ -1,1 +1,5 @@
-- Add ability to load/save game data from/to file.
+- Add methods to write object data to file for CSpriteFameSheet, CLayer, CSpriteEx, and CSprite.
+
+- Add ability to load game data from file.
+
+- Add audio support.

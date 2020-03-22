@@ -1,6 +1,5 @@
 //Game2D Library v1.0
 //Written by Andrew Sturges
-//November 2019
 
 #ifndef _GAME_2D_H
 #define _GAME_2D_H
@@ -70,6 +69,8 @@ void MoveView(float, float);
 void ShiftView(float, float);
 void ClampView(void);
 void SetLayerZOrder(std::list<CLayer>::iterator, std::list<CLayer>::iterator);
+void SaveGameState(void);
+void LoadGameState(void);
 LRESULT gameMainWin_OnClose_Default(CWindow*, const CWinEvent&);
 LRESULT gameMainWin_OnSize_Default(CWindow*, const CWinEvent&);
 
@@ -78,10 +79,10 @@ class CLayer
   public:
 
     std::string layerName;
-    std::list<CSpriteEx> spriteList;
     bool allowMotion;
     bool allowCollisions;
     bool isVisible;
+    std::list<CSpriteEx> spriteList;
 
     CLayer(void);
 
@@ -107,8 +108,6 @@ class CSpriteEx : public CSprite
     CVector2D position;
     CVector2D velocity;
     CVector2D acceleration;
-    CVector2D prevPosition;
-    CVector2D prevVelocity;
     CVector2D minPosition;
     CVector2D maxPosition;
     CVector2D minVelocity;
@@ -120,6 +119,8 @@ class CSpriteEx : public CSprite
     bool clampVelocity;
     bool drawRelativeToView;
     CBoundingRect boundingRect;
+    CVector2D prevPosition;
+    CVector2D prevVelocity;
     void (*preResoveCollisionFuncPtr)(std::list<CCollisionEvent>::iterator, unsigned int, unsigned int);
     void (*postResoveCollisionFuncPtr)(std::list<CCollisionEvent>::iterator, unsigned int, unsigned int);
 
