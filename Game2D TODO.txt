@@ -1,4 +1,4 @@
-- Add methods to write object data to file for CSpriteFameSheet, CLayer, CSpriteEx, and CSprite.
+- Add methods to write object data to file for CLayer and CSpriteEx.
 
 - Add ability to load game data from file.
 
