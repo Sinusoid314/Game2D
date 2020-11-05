@@ -1,3 +1,4 @@
+#include <iostream>
 #include "..\Game2D.h"
 #include "Game2DTest.h"
 
@@ -14,8 +15,8 @@ bool Game2DTestSetup(void)
 
     //Set the input handlers
     gameMainWin.AddEvent(WM_KEYDOWN, gameMainWin_OnKeyDown, WINEVENT_MESSAGE);
-    //gameMainWin.AddEvent(WM_KEYUP, gameMainWin_OnKeyUp, WINEVENT_MESSAGE);
-    //beginMoveSpritesFuncPtr = OnBeginMoveSprites;
+    gameMainWin.AddEvent(WM_KEYUP, gameMainWin_OnKeyUp, WINEVENT_MESSAGE);
+    beginMoveSpritesFuncPtr = OnBeginMoveSprites;
 
     ResizeView(600, 400);
 
@@ -44,22 +45,22 @@ void SetupGraphics(void)
     backImagePtr = streetImgPtr;
 
     //Create sprites
-    spriteList.emplace_front(carSheetPtr);
-    carSpriteItr = spriteList.begin();
+    layerList.front().spriteList.emplace_front(carSheetPtr);
+    carSpriteItr = layerList.front().spriteList.begin();
     carSpriteItr->spriteName = "car";
     carSpriteItr->position.SetComponents(350, 10);
-    carSpriteItr->applyGravity = true;
+    carSpriteItr->gravityScale = 1;
 
-    spriteList.emplace_front(bubbaSheetPtr);
-    bubbaSpriteItr = spriteList.begin();
+    layerList.front().spriteList.emplace_front(bubbaSheetPtr);
+    bubbaSpriteItr = layerList.front().spriteList.begin();
     bubbaSpriteItr->spriteName = "bubba";
     bubbaSpriteItr->position.SetComponents(200, 10);
     bubbaSpriteItr->drawsPerFrame = 7;
     bubbaSpriteItr->SetFrameRange(0, 0);
-    bubbaSpriteItr->applyGravity = true;
+    bubbaSpriteItr->gravityScale = 1;
 
-    spriteList.emplace_front(curbSheetPtr);
-    curbSpriteItr = spriteList.begin();
+    layerList.front().spriteList.emplace_front(curbSheetPtr);
+    curbSpriteItr = layerList.front().spriteList.begin();
     curbSpriteItr->spriteName = "curb";
     curbSpriteItr->position.SetComponents(0, 375);
 }
@@ -92,6 +93,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 LRESULT gameMainWin_OnKeyDown(CWindow* winPtr, const CWinEvent& eventObj)
 //
 {
+    //cout << "gameMainWin_OnKeyDown" << endl;
+
     if((!isKeyDown[MOVE_LEFT_KEY]) && (!isKeyDown[MOVE_RIGHT_KEY]))
     {
         if(eventObj.wParam == MOVE_LEFT_KEY)
@@ -116,6 +119,8 @@ LRESULT gameMainWin_OnKeyDown(CWindow* winPtr, const CWinEvent& eventObj)
 LRESULT gameMainWin_OnKeyUp(CWindow* winPtr, const CWinEvent& eventObj)
 //
 {
+    //cout << "gameMainWin_OnKeyUp" << endl;
+
     if((eventObj.wParam == MOVE_LEFT_KEY) && (isKeyDown[MOVE_LEFT_KEY]))
     {
         isKeyDown[MOVE_LEFT_KEY] = false;
