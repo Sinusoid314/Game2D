@@ -1,3 +1,5 @@
+- Add event handler for collision events that are no longer true in the next frame.
+
 - Add methods to write object data to file for CLayer and CSpriteEx.
 
 - Add ability to load game data from file.

@@ -6,6 +6,7 @@
 
 #include <list>
 #include <vector>
+#include <fstream>
 #include "..\WinGUI\WinGUI.h"
 #include "..\Vector2D\Vector2D.h"
 
@@ -41,6 +42,7 @@ extern CBoundingRect viewLimitRect;
 extern std::list<CSpriteFrameSheet> frameSheetList;
 extern std::list<CLayer> layerList;
 extern std::list<CCollisionEvent> collisionEventList;
+extern std::list<CCollisionEvent> prevCollisionEventList;
 extern CMainWindow gameMainWin;
 extern CDrawBox gameView;
 extern void (*beginGameLoopFuncPtr)(void);
@@ -71,6 +73,7 @@ void ClampView(void);
 void SetLayerZOrder(std::list<CLayer>::iterator, std::list<CLayer>::iterator);
 void SaveGameState(void);
 void LoadGameState(void);
+std::list<CCollisionEvent>::iterator FindCollisionEventBySprites(std::list<CCollisionEvent>::iterator);
 LRESULT gameMainWin_OnClose_Default(CWindow*, const CWinEvent&);
 LRESULT gameMainWin_OnSize_Default(CWindow*, const CWinEvent&);
 
@@ -86,6 +89,7 @@ class CLayer
 
     CLayer(void);
 
+    bool WriteToFile(std::ofstream&);
     void SetSpriteZOrder(std::list<CSpriteEx>::iterator, std::list<CSpriteEx>::iterator);
     void MoveSpriteToLayer(std::list<CSpriteEx>::iterator, std::list<CLayer>::iterator, std::list<CSpriteEx>::iterator);
 };
@@ -112,8 +116,8 @@ class CSpriteEx : public CSprite
     CVector2D maxPosition;
     CVector2D minVelocity;
     CVector2D maxVelocity;
+    float gravityScale;
     bool applyMotion;
-    bool applyGravity;
     bool applyCollisions;
     bool clampPosition;
     bool clampVelocity;
@@ -123,11 +127,13 @@ class CSpriteEx : public CSprite
     CVector2D prevVelocity;
     void (*preResoveCollisionFuncPtr)(std::list<CCollisionEvent>::iterator, unsigned int, unsigned int);
     void (*postResoveCollisionFuncPtr)(std::list<CCollisionEvent>::iterator, unsigned int, unsigned int);
+    void (*leaveCollisionEventFuncPtr)(std::list<CCollisionEvent>::iterator, unsigned int, unsigned int);
 
     CSpriteEx(void);
     CSpriteEx(CSpriteFrameSheet*);
     //~CSpriteEx(void);
 
+    bool WriteToFile(std::ofstream&);
     void UpdateMotion(float);
     void GetAbsBoundingRect(CBoundingRect&);
     void ResizeWithBoundingRect(int, int);

@@ -1,5 +1,8 @@
 [v1.0]
 
+(April 30, 2020)
+	-Replaced applyGavity with gravityScale in CSpriteEx to give sprites a variable gravity motion.
+
 (March 14, 2020)
 	- Moved WriteGameStateString() to the stringExt library as WriteStrToFile().
 

@@ -1,7 +1,6 @@
 #include "float.h"
 #include "math.h"
 #include <iostream>
-#include <fstream>
 #include "..\String Extension\stringExt.h"
 #include "Game2D.h"
 
@@ -22,6 +21,7 @@ CBoundingRect viewLimitRect;
 list<CSpriteFrameSheet> frameSheetList;
 list<CLayer> layerList;
 list<CCollisionEvent> collisionEventList;
+list<CCollisionEvent> prevCollisionEventList;
 CMainWindow gameMainWin;
 CDrawBox gameView;
 void (*beginGameLoopFuncPtr)(void);
@@ -174,11 +174,7 @@ void MoveSprites(void)
             {
                 if(spriteItr1->applyMotion)
                 {
-                    if(spriteItr1->applyGravity)
-                    {
-                        spriteItr1->acceleration += gravityAcceleration;
-                    }
-
+                    spriteItr1->acceleration += (gravityAcceleration * spriteItr1->gravityScale);
                     spriteItr1->UpdateMotion(motionStepTime);
                 }
             }
@@ -362,6 +358,9 @@ void AddCollisionEvent(void)
 void ResolveCollisions(void)
 //Set each colliding sprite pair to their resolved positions
 {
+    static list<CCollisionEvent>::iterator prevEventItr;
+    static list<CCollisionEvent>::iterator matchEventItr;
+
     if(beginResolveCollisionsFuncPtr != NULL)
         (*beginResolveCollisionsFuncPtr)();
 
@@ -370,6 +369,22 @@ void ResolveCollisions(void)
 
     //Sort list by contact time in descending order
     collisionEventList.sort();
+
+    //Use and lose prevCollisionEventList
+    for(prevEventItr = prevCollisionEventList.begin(); prevEventItr != prevCollisionEventList.end(); prevEventItr++)
+    {
+
+
+        if(matchEventItr == collisionEventList.end())
+        {
+            if()
+            {
+                //leaveCollisionEventFuncPtr
+            }
+        }
+    }
+
+    prevCollisionEventList.clear();
 
     for(eventItr = collisionEventList.begin(); eventItr != collisionEventList.end(); eventItr++)
     {
@@ -403,6 +418,8 @@ void ResolveCollisions(void)
             (*(eventItr->collidingSpriteItr[0]->postResoveCollisionFuncPtr))(eventItr, 0, 1);
         if(eventItr->collidingSpriteItr[1]->postResoveCollisionFuncPtr != NULL)
             (*(eventItr->collidingSpriteItr[1]->postResoveCollisionFuncPtr))(eventItr, 1, 0);
+
+        //Add to prevCollisionEventList if either sprite has leaveCollisionEventFuncPtr not NULL
     }
 
     collisionEventList.clear();
@@ -615,8 +632,8 @@ void SaveGameState(char* fileName)
             fileObj.write((char*)&spriteItr1->maxPosition, sizeof(CVector2D));
             fileObj.write((char*)&spriteItr1->minVelocity, sizeof(CVector2D));
             fileObj.write((char*)&spriteItr1->maxVelocity, sizeof(CVector2D));
+            fileObj.write((char*)&spriteItr1->gravityScale, sizeof(spriteItr1->gravityScale));
             fileObj.write((char*)&spriteItr1->applyMotion, sizeof(spriteItr1->applyMotion));
-            fileObj.write((char*)&spriteItr1->applyGravity, sizeof(spriteItr1->applyGravity));
             fileObj.write((char*)&spriteItr1->applyCollisions, sizeof(spriteItr1->applyCollisions));
             fileObj.write((char*)&spriteItr1->clampPosition, sizeof(spriteItr1->clampPosition));
             fileObj.write((char*)&spriteItr1->clampVelocity, sizeof(spriteItr1->clampVelocity));
@@ -632,6 +649,25 @@ void LoadGameState(char* fileName)
 //Load game data from file
 {
 
+}
+
+list<CCollisionEvent>::iterator FindCollisionEventBySprites()
+//
+{
+    matchEventItr = collisionEventList.end();
+
+    for(eventItr = collisionEventList.begin(); eventItr != collisionEventList.end(); eventItr++)
+    {
+        if(((prevEventItr->collidingSpriteItr[0] == eventItr->collidingSpriteItr[0])
+            &(prevEventItr->collidingSpriteItr[1] == eventItr->collidingSpriteItr[1]))
+           || ((prevEventItr->collidingSpriteItr[0] == eventItr->collidingSpriteItr[1])
+               &(prevEventItr->collidingSpriteItr[1] == eventItr->collidingSpriteItr[0]))
+          )
+        {
+            matchEventItr = eventItr;
+            break;
+        }
+    }
 }
 
 LRESULT gameMainWin_OnClose_Default(CWindow* winPtr, const CWinEvent& eventObj)
@@ -659,6 +695,12 @@ CLayer::CLayer(void)
     allowMotion = true;
     allowCollisions = true;
     isVisible = true;
+}
+
+bool CLayer::WriteToFile(std::ofstream& fileObj)
+//
+{
+    return false;
 }
 
 void CLayer::SetSpriteZOrder(list<CSpriteEx>::iterator targetSpriteItr, list<CSpriteEx>::iterator beforeSpriteItr)
@@ -713,6 +755,12 @@ CSpriteEx::CSpriteEx(CSpriteFrameSheet* newFrameSheetPtr)
 //
 {
     Init();
+}
+
+bool CSpriteEx::WriteToFile(std::ofstream& fileObj)
+//
+{
+    return false;
 }
 
 void CSpriteEx::UpdateMotion(float deltaTime)
@@ -790,8 +838,8 @@ void CSpriteEx::Init(void)
     maxPosition.SetComponents(FLT_MAX, FLT_MAX);
     minVelocity.SetComponents(-FLT_MAX, -FLT_MAX);
     maxVelocity.SetComponents(FLT_MAX, FLT_MAX);
+    gravityScale = 0.0f;
     applyMotion = true;
-    applyGravity = false;
     applyCollisions = true;
     clampPosition = false;
     clampVelocity = false;

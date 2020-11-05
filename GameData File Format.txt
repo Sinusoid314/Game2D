@@ -1,0 +1,7 @@
+{Global properties}
+Sprite frame sheet count
+	{Sprite frame sheet properties}
+Layer count
+	{Layer properties}
+	Sprite count
+		{Sprite properties}
